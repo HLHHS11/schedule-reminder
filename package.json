@@ -1,0 +1,15 @@
+{
+  "name": "schedule-reminder",
+  "version": "1.0.0",
+  "description": "Googleスプレッドシート上に登録されたスケジュールを，GASの定期実行によりLINEグループに通知します。",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@types/google-apps-script": "^1.0.75"
+  }
+}
