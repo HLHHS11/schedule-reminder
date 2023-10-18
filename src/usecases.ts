@@ -6,6 +6,7 @@ namespace UseCases {
       private readonly ss: GoogleAppsScript.Spreadsheet.Spreadsheet,
       private readonly scheduleDao: Infrastructure.ScheduleDao,
       private readonly today: Date,
+      private readonly apiClient: Infrastructure.NotifyAPIClient,
     ) {}
 
     public remind(): void {
@@ -27,6 +28,12 @@ namespace UseCases {
         tomorrowPractices.forEach(practice => {
           remindMessage += `\n${practice.getRemindMessage()}`;
         });
+      }
+      
+      if (remindMessage !== "") {
+        this.apiClient.sendMessage(remindMessage);
+      } else {
+        console.log("No practice tomorrow.");
       }
     }
     
