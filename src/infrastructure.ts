@@ -71,4 +71,45 @@ namespace Infrastructure {
 
   }
 
+  export interface NotifyAPIClient {
+    sendMessage(message: string): boolean;
+  }
+
+  export class LINENotifyAPIClientImpl implements NotifyAPIClient {
+
+    constructor(
+      private readonly accessToken: string
+    ) {}
+
+    public sendMessage(message: string): boolean {
+      const options: GoogleAppsScript.URL_Fetch.URLFetchRequestOptions = {
+        method: "post",
+        headers: {
+          "Authorization": `Bearer ${this.accessToken}`,
+        },
+        payload: {
+          "message": message,
+        },
+      };
+      const response = UrlFetchApp.fetch("https://notify-api.line.me/api/notify", options);
+      const responseCode = response.getResponseCode();
+      if (responseCode === 200) {
+        return true;
+      } else {
+        console.log(`Failed to notify. Response code: ${responseCode}`);
+        return false;
+      }
+    }
+
+  }
+
+  export class MockNotifyAPIClientImpl implements NotifyAPIClient {
+
+    public sendMessage(message: string): boolean {
+      console.log(`Notify:\n${message}`);
+      return true;
+    }
+
+  }
+
 }
