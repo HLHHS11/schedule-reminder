@@ -31,6 +31,7 @@ namespace UseCases {
       }
       
       if (remindMessage !== "") {
+        remindMessage += "\n\n試合球・練習球は誰が持っていきますか？";
         this.apiClient.sendMessage(remindMessage);
       } else {
         console.log("No practice tomorrow.");
