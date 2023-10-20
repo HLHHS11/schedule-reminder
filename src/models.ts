@@ -3,6 +3,7 @@ namespace Models {
   export class Practice {
     private readonly date: Date;
     private readonly time: string;
+    private readonly startTime: Date;
     private readonly court: string;
     private readonly courtName: string;
     private readonly booker: string;
@@ -33,6 +34,20 @@ namespace Models {
 
     public getTimeString(): string {
       return this.time;
+    }
+
+    public getStartTime(): Date {
+      const startTimeInt = parseInt(this.time.split("-")[0]);
+      // 08:00~10:00は間違いなく"8-10"と表記する一方で，16:00~21:00は"16-21"だけでなく"4-9", 18:00~21:00は"18-21"だけでなく"6-9"と表記される可能性がある
+      // また，朝7時以前および夜20時以降に練習がスタートすることはないと仮定する。
+      // そこで，startTimeNumが8以上のときはhoursをそのまま解釈し，startTimeNumが0~7のときにはhoursに12を足して「午後」の時間として解釈する
+      if (startTimeInt <= 7) {
+        return new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate(), startTimeInt + 12);
+      } else if (startTimeInt >= 8 && startTimeInt <= 23) {
+        return new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate(), startTimeInt);
+      } else {
+        throw new Error(`Failed to parse time string: ${this.time}`);
+      }
     }
 
     public getCourtNameString(): string {
