@@ -24,5 +24,5 @@ clasp push
 ```
 
 ## モジュール分割について
-`import`, `export`がサポートされていないので，`module.exports`を利用してモジュール分割を行う。  
-参考サイト: https://www.nowhere.co.jp/blog/archives/20211126-30367.html
+`import`, `export`がサポートされていないので，namespaceを利用してモジュール分割を行う  
+参考サイト: https://zenn.dev/someone7140/articles/f7d2eac8fb69fe
