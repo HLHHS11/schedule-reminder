@@ -1,4 +1,5 @@
-namespace Enums {
+// Constant Values
+namespace cst {
 
   export enum ColumnNumber {
     DATE = 2,
@@ -15,10 +16,6 @@ namespace Enums {
     ATTRIBUTE = 2,
     EVENT_LIST_START = 3,
   }
-
-}
-
-namespace Sets {
 
   export const Months = new Set([
     "1月",
