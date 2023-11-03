@@ -35,7 +35,7 @@ namespace uc {
       // メッセージ生成
       const messages: string[] = [];
       scheduleTodayAfter4pm.getPractices().forEach(practice => {
-        messages.push(this.messageGenerator.generate(practice, "本日の練習のリマインドです", "ボール担当の方よろしくお願いいたします"));
+        messages.push(this.messageGenerator.generate(practice, "本日の練習の再リマインドです", "ボール担当の方よろしくお願いいたします"));
       })
       scheduleTomorrow.getPractices().forEach(practice => {
         messages.push(this.messageGenerator.generate(practice, "", "試合球・練習球は誰が持っていきますか？"));
