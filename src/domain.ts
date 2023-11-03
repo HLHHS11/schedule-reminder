@@ -2,70 +2,63 @@
 namespace mo {
 
   export class Practice {
-    private readonly date: Date;
-    private readonly time: string;
-    private readonly startTime: Date;
-    private readonly court: string;
-    private readonly courtName: string;
-    private readonly booker: string;
-    private members: string[];
 
-    constructor(param0: {date: Date, time: string, court: string, courtName: string, members: string[], booker: string}) {
-      this.date = param0.date;
-      this.time = param0.time;
-      this.court = param0.court;
-      this.courtName = param0.courtName;
-      this.members = param0.members;
-      this.booker = param0.booker;
+    public readonly date: Date;
+    public readonly startHours: number;
+    public readonly endHours: number;
+    public readonly courtName: string;
+    public readonly courtNumber: string;
+    private _members: string[];  // NOTE: addMembers()メソッドの実装の都合上，readonlyが使えない
+    public readonly booker: string;
+
+    constructor(
+      date: Date,
+      startHours: number,
+      endHours: number,
+      courtName: string,
+      courtNumber: string,
+      members: string[],
+      booker: string
+    ) {
+      this.date = new Date(date.getFullYear(), date.getMonth(), date.getDate());  // 時刻部分を切り捨てる
+      if (startHours < 0 || startHours > 23 || endHours < 0 || endHours > 23) {
+        throw new Error("Invalid hours.");
+      }
+      this.startHours = startHours;
+      this.endHours = endHours;
+      this.courtName = courtName;
+      this.courtNumber = courtNumber;
+      this._members = members;
+      this.booker = booker;
     }
+    
+    public get members(): string[] {return this._members;}  // NOTE: readonlyが使えないためgetterを定義しほぼ同様の挙動を実現
 
-    public getDateObj(): Date {
-      return this.date;
+    public addMembers(members: string[]): void {
+      this._members = this._members.concat(members);
     }
 
     public getDateString(): string {
       return Utilities.formatDate(this.date, "JST", "MM/dd");
     }
-
     public getDayString(): string {
       const dayStringArr = ["(日)", "(月)", "(火)", "(水)", "(木)", "(金)", "(土)"];
       const dayNum = this.date.getDay();
       return dayStringArr[dayNum];
     }
-
     public getTimeString(): string {
-      return this.time;
+      return `${this.startHours}-${this.endHours}`;
     }
-
-    public getStartTime(): Date {
-      const startTimeInt = parseInt(this.time.split("-")[0]);
-      // 08:00~10:00は間違いなく"8-10"と表記する一方で，16:00~21:00は"16-21"だけでなく"4-9", 18:00~21:00は"18-21"だけでなく"6-9"と表記される可能性がある
-      // また，朝7時以前および夜20時以降に練習がスタートすることはないと仮定する。
-      // そこで，startTimeNumが8以上のときはhoursをそのまま解釈し，startTimeNumが0~7のときにはhoursに12を足して「午後」の時間として解釈する
-      if (startTimeInt <= 7) {
-        return new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate(), startTimeInt + 12);
-      } else if (startTimeInt >= 8 && startTimeInt <= 23) {
-        return new Date(this.date.getFullYear(), this.date.getMonth(), this.date.getDate(), startTimeInt);
-      } else {
-        throw new Error(`Failed to parse time string: ${this.time}`);
-      }
+    public getCourtInfoString(): string {
+      return `${this.courtName}${this.courtNumber}`;
     }
-
-    public getCourtNameString(): string {
-      return `${this.court}${this.courtName}`;
-    }
-
     public getMembersString(): string {
-      return this.members.join("");
+      return this._members.join("");
     }
-
     public getBookerString(): string {
       return this.booker;
     }
 
-    public addMembers(members: string[]): void {
-      this.members = this.members.concat(members);
-    }
 
   }
 
@@ -79,7 +72,7 @@ namespace mo {
     constructor(practices: Practice[], isSorted: boolean = false) {
       // TODO: フィルタリング条件によっては，ソートされていることを前提にして以後の探索を打ち切ることができるかもしれない。その場合に対応できるよう，とりあえずソート。
       if (!isSorted) {
-        practices = practices.sort((a, b) => a.getStartTime().getTime() - b.getStartTime().getTime());
+        practices = practices.sort((a, b) => a.startHours - b.startHours);
       }
       this.practices = practices;
     }
@@ -140,7 +133,7 @@ namespace srv {
       const date = practice.getDateString();
       const day = practice.getDayString();
       const time = practice.getTimeString();
-      const courtAndNumber = practice.getCourtNameString();
+      const courtAndNumber = practice.getCourtInfoString();
       const members = practice.getMembersString();
       const booker = practice.getBookerString();
       return `\n${preamble ? preamble+"\n" : ""}${date}${day} ${time} ${courtAndNumber} (${booker})\n${members}${appendix ? "\n"+appendix : ""}`;
