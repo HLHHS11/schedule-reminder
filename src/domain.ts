@@ -87,7 +87,21 @@ namespace mo {
   }
 
   // filter strategy implementations
-  export class OnAndAfterTodayStrategy implements IFilterStrategy {
+  export class TodayOrTomorrowStrategy implements IFilterStrategy {
+    private readonly todayTime: number;
+
+    constructor(today: Date) {
+      this.todayTime = new Date(today.getFullYear(), today.getMonth(), today.getDate()).getTime();
+    }
+
+    public matches(practice: Practice): boolean {
+      // return practice.date.getTime() >= this.todayTime;
+      const dateTime = practice.date.getTime();
+      return dateTime === this.todayTime || dateTime === this.todayTime + 24*60*60*1000;
+    }
+  }
+
+  export class TodayStrategy implements IFilterStrategy {
     private readonly todayTime: number;
 
     constructor(today: Date) {
@@ -111,15 +125,18 @@ namespace mo {
     }
   }
 
-  export class TodayAfter4pmStrategy implements IFilterStrategy {
-    private readonly today4pmTime: number;
+  export class AfterSpecificHoursStrategy implements IFilterStrategy {
+    private readonly specificHours: number;
 
-    constructor(today: Date) {
-      this.today4pmTime = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 16).getTime();
+    constructor(specificHours: number) {
+      if (specificHours < 0 || specificHours > 23) {
+        throw new Error("Invalid hours.");
+      }
+      this.specificHours = specificHours;
     }
 
     public matches(practice: Practice): boolean {
-      return practice.getDateObj().getTime() === this.today4pmTime && practice.getStartTime().getTime() >= this.today4pmTime;
+      return practice.startHours >= this.specificHours;
     }
   }
 

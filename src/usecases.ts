@@ -23,14 +23,15 @@ namespace uc {
     public remind(): void {
       // スケジュールを取得
       const schedule = this.scheduleRepo.get();
-      // フィルタリング条件をインスタンス化
-      const onAndAfterToday = new mo.OnAndAfterTodayStrategy(this.today);
-      const todayAfter4pm = new mo.TodayAfter4pmStrategy(this.today);
-      const tomorrow = new mo.TomorrowStrategy(this.today);
+      // フィルタリング条件を生成
+      const stratTodayTomorrow = new mo.TodayOrTomorrowStrategy(this.today);
+      const stratToday = new mo.TodayStrategy(this.today);
+      const stratTomorrow = new mo.TomorrowStrategy(this.today);
+      const stratAfter4pm = new mo.AfterSpecificHoursStrategy(16);
       // フィルタリング
-      const scheduleOnAndAfterToday = schedule.filter(onAndAfterToday);
-      const scheduleTodayAfter4pm = scheduleOnAndAfterToday.filter(todayAfter4pm);
-      const scheduleTomorrow = scheduleOnAndAfterToday.filter(tomorrow);
+      const scheduleTodayTomorrow = schedule.filter(stratTodayTomorrow);
+      const scheduleTodayAfter4pm = scheduleTodayTomorrow.filter(stratToday).filter(stratAfter4pm);
+      const scheduleTomorrow = scheduleTodayTomorrow.filter(stratTomorrow);
       // メッセージ生成
       const messages: string[] = [];
       scheduleTodayAfter4pm.getPractices().forEach(practice => {
