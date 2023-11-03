@@ -69,7 +69,7 @@ namespace mo {
 
   }
 
-  export interface FilterStrategy {
+  export interface IFilterStrategy {
     matches(practice: Practice): boolean;
   }
 
@@ -88,13 +88,13 @@ namespace mo {
       return this.practices;
     }
 
-    public filter(strategy: FilterStrategy): Schedule {
+    public filter(strategy: IFilterStrategy): Schedule {
       return new Schedule(this.practices.filter(practice => strategy.matches(practice)), true);
     } 
   }
 
   // filter strategy implementations
-  export class OnAndAfterTodayStrategy implements FilterStrategy {
+  export class OnAndAfterTodayStrategy implements IFilterStrategy {
     private readonly todayTime: number;
 
     constructor(today: Date) {
@@ -106,7 +106,7 @@ namespace mo {
     }
   }
 
-  export class TomorrowStrategy implements FilterStrategy {
+  export class TomorrowStrategy implements IFilterStrategy {
     private readonly tomorrowTime: number;
 
     constructor(today: Date) {
@@ -118,7 +118,7 @@ namespace mo {
     }
   }
 
-  export class TodayAfter4pmStrategy implements FilterStrategy {
+  export class TodayAfter4pmStrategy implements IFilterStrategy {
     private readonly today4pmTime: number;
 
     constructor(today: Date) {
