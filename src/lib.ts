@@ -1,4 +1,4 @@
-namespace Lib {
+namespace lib {
 
   export const parseDateString = (dateStr: string): Date => {
     // dateStrが"○月○日"型なら
