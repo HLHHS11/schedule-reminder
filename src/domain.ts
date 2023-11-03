@@ -95,7 +95,7 @@ namespace mo {
     }
 
     public matches(practice: Practice): boolean {
-      return practice.getDateObj().getTime() >= this.todayTime;
+      return practice.date.getTime() === this.todayTime;
     }
   }
 
@@ -107,7 +107,7 @@ namespace mo {
     }
 
     public matches(practice: Practice): boolean {
-      return practice.getDateObj().getTime() === this.tomorrowTime;
+      return practice.date.getTime() === this.tomorrowTime;
     }
   }
 
